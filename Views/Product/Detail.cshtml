@@ -1,0 +1,176 @@
+﻿@using UIStoreMVC.Helpers
+@using System.Globalization
+@model Application.DTOs.ProductDTOs.ProductDetailDto
+
+@{
+    ViewData["Title"] = Model?.Name ?? "Ürün Detay";
+
+    var tr = new CultureInfo("tr-TR");
+
+    // ✅ Geri dönüş: hangi sayfadan geldiyse
+    var returnUrl = Context.Request.Query["returnUrl"].ToString();
+    var backUrl = !string.IsNullOrWhiteSpace(returnUrl)
+        ? returnUrl
+        : Url.Action("List", "Product");
+
+    // ✅ Tek kapak görsel: list ile aynı (ImageUrl)
+    var coverUrl = string.IsNullOrWhiteSpace(Model?.ImageUrl)
+        ? "/images/no-image.jpg"
+        : Model!.ImageUrl;
+
+    // ✅ İndirim mantığı: Discount çarpan (0.90 => %10 indirim)
+    var hasDiscount = Model != null && Model.Discount > 0m && Model.Discount < 1m;
+    var oldPrice = Model?.Price ?? 0m;
+    var discountedPrice = hasDiscount ? (oldPrice * Model!.Discount) : oldPrice;
+    var discountPercent = hasDiscount ? (int)((1m - Model!.Discount) * 100m) : 0;
+
+    // ✅ Sepete ekledikten sonra direkt sepete git
+    var cartUrl = Url.Action("Index", "Cart");
+}
+
+@functions {
+    string ResolveImage(string? imageUrl)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl))
+            return Url.Content("~/images/no-image.jpg");
+
+        imageUrl = imageUrl.Trim();
+
+        // Harici URL
+        if (imageUrl.StartsWith("http://") || imageUrl.StartsWith("https://"))
+            return imageUrl;
+
+        imageUrl = imageUrl.TrimStart('~').TrimStart('/');
+
+        if (imageUrl.StartsWith("images/"))
+            return Url.Content("~/" + imageUrl);
+
+        return Url.Content("~/images/" + imageUrl);
+    }
+}
+
+@if (Model == null)
+{
+    <div class="container my-4">
+        <div class="alert alert-danger">Ürün bulunamadı.</div>
+    </div>
+    return;
+}
+
+<section class="container my-4 my-lg-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a class="btn btn-outline-secondary rounded-pill px-3 py-2"
+           style="font-size:.95rem;"
+           href="@backUrl">
+            <i class="bi bi-arrow-left me-1"></i> Geri Dön
+        </a>
+    </div>
+
+    <div class="row g-4 g-lg-5 align-items-start">
+
+        <!-- SOL: IMAGE -->
+        <div class="col-lg-7">
+            <div class="bg-white border rounded-5 shadow-sm overflow-hidden">
+                <img src="@ResolveImage(coverUrl)"
+                     class="w-100"
+                     style="height:420px; object-fit:cover;"
+                     alt="@Model.Name"
+                     loading="lazy"
+                     decoding="async"
+                     referrerpolicy="no-referrer"
+                     onerror="this.onerror=null;this.src='@Url.Content("~/images/no-image.jpg")';">
+            </div>
+        </div>
+
+        <!-- SAĞ: INFO -->
+        <div class="col-lg-5">
+            <div class="bg-white border rounded-5 shadow-sm p-4 p-lg-4">
+
+                <!-- ✅ Daha dengeli başlık (çok büyütmüyoruz) -->
+                <h1 class="fw-bold mb-2" style="font-size:1.85rem; line-height:1.2;">
+                    @Model.Name
+                </h1>
+
+                <!-- ✅ Fiyat alanı -->
+                <div class="d-flex align-items-end flex-wrap gap-2 mb-3">
+                    @if (hasDiscount)
+                    {
+                        <span class="text-muted text-decoration-line-through" style="font-size:1.05rem;">
+                            @oldPrice.ToString("C", tr)
+                        </span>
+
+                        <span class="fw-bold text-danger" style="font-size:1.55rem;">
+                            @discountedPrice.ToString("C", tr)
+                        </span>
+
+                        <span class="badge bg-danger rounded-pill px-2 py-1" style="font-size:.85rem;">
+                            %@discountPercent
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="fw-bold text-primary" style="font-size:1.55rem;">
+                            @oldPrice.ToString("C", tr)
+                        </span>
+                    }
+                </div>
+
+                <!-- ✅ Stok chip (anasayfa vibe) -->
+                <div class="alert alert-primary d-flex align-items-center gap-2 mb-3"
+                     style="border-radius:16px;">
+                    <i class="bi bi-box-seam"></i>
+                    <div>
+                        <span class="fw-semibold">Stokta:</span>
+                        <span>@Model.Stock adet</span>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <div class="mb-4">
+                        <div class="fw-semibold mb-1">Açıklama</div>
+                        <p class="text-muted mb-0" style="font-size:.98rem;">
+                            @Model.Description
+                        </p>
+                    </div>
+                }
+
+                <!-- ✅ Sepete ekle kartı -->
+                <form asp-controller="Cart"
+                      asp-action="Add"
+                      asp-route-returnUrl="@cartUrl"
+                      method="post"
+                      class="border rounded-4 p-3"
+                      style="background:#fbfbff;">
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden" name="productId" value="@Model.Id" />
+
+                    <label class="form-label fw-semibold mb-2" style="font-size:.95rem;">Adet</label>
+                    <input class="form-control"
+                           style="height:44px;"
+                           type="number"
+                           name="quantity"
+                           value="1"
+                           min="1"
+                           max="@Model.Stock"
+                           @(Model.Stock <= 0 ? "disabled" : "") />
+
+                    <button class="btn btn-primary w-100 rounded-pill mt-3 py-2"
+                            style="font-size:1rem;"
+                            type="submit"
+                            @(Model.Stock <= 0 ? "disabled" : "")>
+                        <i class="bi bi-cart-plus me-2"></i> Sepete Ekle
+                    </button>
+
+                    <small class="text-muted d-block mt-2">
+                        İpucu: Sepete ekledikten sonra ödeme adımına geçebilirsin ✨
+                    </small>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</section>

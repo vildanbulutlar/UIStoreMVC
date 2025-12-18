@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Application.DTOs.CategoryDTOs.CategoryDto>
+
+@{
+    var list = Model?.ToList() ?? new List<Application.DTOs.CategoryDTOs.CategoryDto>();
+    int? selected = ViewBag.SelectedCategoryId as int?;
+}
+
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" role="button"
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-th"></i> Kategoriler
+    </a>
+
+    <div class="dropdown-menu mega-menu shadow border-0 p-0 overflow-hidden">
+        <!-- ÜST BAR -->
+        <div class="mega-header d-flex align-items-center justify-content-between px-3 py-2">
+            <a class="mega-all fw-semibold text-decoration-none"
+               href="@Url.Action("List", "Product")">
+                Tüm Kategoriler
+            </a>
+
+            <span class="mega-count small text-muted">Toplam: @list.Count</span>
+        </div>
+
+        <!-- İÇERİK -->
+        <div class="p-3">
+            <div class="row g-2 mega-row">
+                @foreach (var c in list)
+                {
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <a class="mega-link @(selected == c.Id ? "active" : "")"
+                           href="@Url.Action("List", "Product", new { CategoryId = c.Id })">
+                            <span class="mega-name">@c.Name</span>
+                            <span class="mega-sub">Keşfet</span>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</li>

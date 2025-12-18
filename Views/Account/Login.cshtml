@@ -1,0 +1,96 @@
+﻿@using UIStoreMVC.Models
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+
+<section class="container my-4 my-lg-5">
+    <div class="auth-wrap auth-bg rounded-5 p-4 p-lg-5 border shadow-sm overflow-hidden">
+        <div class="row g-4 align-items-stretch">
+
+            <!-- SOL: Brand panel -->
+            <div class="col-lg-5">
+                <div class="auth-left h-100 rounded-5 p-4 p-lg-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="auth-logo">
+                            <img src="@Url.Content("~/images/brand/momdev-logo-main.png")"
+                                 alt="MomDev Atelier"
+                                 onerror="this.src='/images/no-image.jpg'">
+                        </div>
+                        <div>
+                            <div class="auth-brand">MomDev Atelier</div>
+                            <div class="auth-brand-sub">Anne modu: açık • Odak modu: aktif ✨</div>
+                        </div>
+                    </div>
+
+                    <h1 class="auth-title mb-2">Giriş Yap</h1>
+                    <p class="auth-desc mb-4">
+                        Siparişlerini takip et, sepetini cihazlar arasında senkronize et.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="auth-chip"><i class="bi bi-box-seam me-1"></i> Sipariş Takibi</span>
+                        <span class="auth-chip"><i class="bi bi-cart-check me-1"></i> Sepet Senkron</span>
+                        <span class="auth-chip"><i class="bi bi-shield-check me-1"></i> Güvenli</span>
+                    </div>
+
+                    <div class="auth-note mt-4">
+                        <i class="bi bi-info-circle me-1"></i>
+                        İpucu: Giriş yapınca sepetin otomatik hesabına bağlanır.
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAĞ: Form card -->
+            <div class="col-lg-7">
+                <div class="auth-card h-100 bg-white rounded-5 p-4 p-lg-5 shadow-sm border">
+                    <form asp-action="Login" method="post" class="auth-form">
+                        @Html.AntiForgeryToken()
+
+                        @* Genel hata mesajları *@
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label auth-label">E-posta</label>
+                            <input asp-for="Email" class="form-control auth-input" placeholder="ornek@mail.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label auth-label">Şifre</label>
+                            <input asp-for="Password" type="password" class="form-control auth-input" placeholder="••••••••" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div class="form-check">
+                                <input asp-for="RememberMe" class="form-check-input" />
+                                <label asp-for="RememberMe" class="form-check-label">
+                                    Beni hatırla
+                                </label>
+                            </div>
+
+                            @* Şifremi unuttum varsa aç *@
+                            @* <a asp-action="ForgotPassword" class="auth-link small">Şifremi unuttum</a> *@
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 auth-btn">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Giriş Yap
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <span class="text-muted">Hesabın yok mu?</span>
+                            <a class="ms-1 auth-link" asp-action="Register">Hemen üye ol</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

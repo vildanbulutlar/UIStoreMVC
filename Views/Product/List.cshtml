@@ -1,0 +1,168 @@
+﻿@model UIStoreMVC.Models.ProductFilterViewModel
+@using UIStoreMVC.Helpers
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Ürünler";
+    var tr = new CultureInfo("tr-TR");
+    var chip = (Context.Request.Query["ChipFilter"].ToString() ?? "").ToLowerInvariant();
+    var total = Model?.Products?.Count() ?? 0;
+}
+
+<div class="container my-4">
+    <div class="row g-4">
+
+        <!-- SOL: KATEGORİ + HIZLI FİLTRE -->
+        <aside class="col-12 col-lg-3">
+            <div class="p-3 bg-white border rounded-4 shadow-sm sticky-top" style="top:90px;">
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="fw-bold">Kategori</div>
+                    <a class="small text-decoration-none"
+                       href="@Url.Action("List", "Product", new { ChipFilter = chip, SearchTerm = Model.SearchTerm, SortBy = Model.SortBy })">
+                        Sıfırla
+                    </a>
+                </div>
+
+                @await Component.InvokeAsync(
+                "CategoryMenu",
+                                new { selectedCategoryId = Model.CategoryId, asDropdown = false }
+                                )
+
+                <hr class="my-3" />
+
+                <div class="fw-bold mb-2">Hızlı Filtre</div>
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("List", "Product", new { ChipFilter = "discounted", CategoryId = Model.CategoryId })"
+                       class="btn btn-sm @(chip == "discounted" ? "btn-primary" : "btn-outline-primary")">
+                        <i class="bi bi-tag me-1"></i> İndirimdekiler
+                    </a>
+
+                    <a href="@Url.Action("List", "Product", new { ChipFilter = "new", CategoryId = Model.CategoryId })"
+                       class="btn btn-sm @(chip == "new" ? "btn-primary" : "btn-outline-primary")">
+                        <i class="bi bi-sparkle me-1"></i> Yeni Gelenler
+                    </a>
+
+                    <a href="@Url.Action("List", "Product", new { ChipFilter = "topseller", CategoryId = Model.CategoryId })"
+                       class="btn btn-sm @(chip == "topseller" ? "btn-primary" : "btn-outline-primary")">
+                        <i class="bi bi-graph-up-arrow me-1"></i> Çok Satanlar
+                    </a>
+
+                    <a href="@Url.Action("List", "Product", new { ChipFilter = "stock", CategoryId = Model.CategoryId })"
+                       class="btn btn-sm @(chip == "stock" ? "btn-primary" : "btn-outline-primary")">
+                        <i class="bi bi-check2-circle me-1"></i> Stokta Olanlar
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- SAĞ: ÜRÜNLER -->
+        <section class="col-12 col-lg-9">
+
+            <!-- BAŞLIK -->
+            <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+                <div>
+                    <h2 class="m-0 fw-bold">Ürünler</h2>
+                    <div class="text-muted small">@total ürün bulundu</div>
+                </div>
+            </div>
+
+            <!-- ARAMA + SIRALAMA -->
+            <form method="get" class="row g-2 mb-3">
+                <input type="hidden" name="ChipFilter" value="@chip" />
+                <input type="hidden" name="CategoryId" value="@Model.CategoryId" />
+
+                <div class="col-12 col-md-7">
+                    <input class="form-control"
+                           name="SearchTerm"
+                           placeholder="Ürün ara..."
+                           value="@Model.SearchTerm"
+                           onchange="this.form.submit()" />
+                </div>
+
+                <div class="col-12 col-md-5">
+                    <select name="SortBy" class="form-select" onchange="this.form.submit()">
+                        <option value="">Sırala</option>
+                        <option value="price_asc" selected="@(Model.SortBy == "price_asc")">Fiyat ↑</option>
+                        <option value="price_desc" selected="@(Model.SortBy == "price_desc")">Fiyat ↓</option>
+                        <option value="name_asc" selected="@(Model.SortBy == "name_asc")">A-Z</option>
+                        <option value="name_desc" selected="@(Model.SortBy == "name_desc")">Z-A</option>
+                    </select>
+                </div>
+            </form>
+
+            <!-- ÜRÜN GRID -->
+            <div class="row g-3">
+               @{
+    decimal NormalizeFactor(decimal d)
+    {
+        if (d > 0m && d < 1m) return d;
+        if (d >= 1m && d <= 100m) return 1m - (d / 100m);
+        return 1m;
+    }
+}
+
+@foreach (var p in Model.Products)
+{
+    var factor = NormalizeFactor(p.Discount);
+    var hasDiscount = factor < 1m;
+    var discountedPrice = hasDiscount ? p.Price * factor : p.Price;
+    var discountPercent = hasDiscount ? (int)Math.Round((1m - factor) * 100m) : 0;
+
+                    <div class="col-12 col-sm-6 col-md-4 col-xl-3">
+                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden product-card">
+
+                            <a asp-controller="Product" asp-action="Detail" asp-route-id="@p.Id"
+                               class="text-decoration-none text-dark">
+
+                                <div class="position-relative">
+                                    <img src="@ImageHelper.Resolve(p.ImageUrl)"
+                                         class="w-100"
+                                         style="height:210px;object-fit:cover"
+                                         alt="@p.Name"
+                                         onerror="this.onerror=null;this.src='@Url.Content("~/images/no-image.jpg")';" />
+
+                                    @if (hasDiscount)
+                                    {
+                                        <span class="badge bg-danger position-absolute top-0 end-0 m-2">
+                                            %@discountPercent
+                                        </span>
+                                    }
+                                </div>
+
+                                <div class="card-body d-flex flex-column">
+                                    <div class="fw-semibold mb-2">@p.Name</div>
+
+                                    <div class="mb-2">
+                                        @if (hasDiscount)
+                                        {
+                                            <span class="text-decoration-line-through text-muted small">
+                                                @p.Price.ToString("C", tr)
+                                            </span>
+                                            <span class="fw-bold text-danger ms-2">
+                                                @discountedPrice.ToString("C", tr)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="fw-bold text-success">
+                                                @p.Price.ToString("C", tr)
+                                            </span>
+                                        }
+                                    </div>
+
+                                    <div class="mt-auto">
+                                        <span class="btn btn-sm btn-outline-primary w-100">
+                                            Detay
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+
+        </section>
+    </div>
+</div>

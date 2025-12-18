@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Application.DTOs.CategoryDTOs.CategoryDto>
+
+@{
+    int? selected = ViewBag.SelectedCategoryId as int?;
+
+    var chip = (Context.Request.Query["ChipFilter"].ToString() ?? "").ToLowerInvariant();
+    var search = Context.Request.Query["SearchTerm"].ToString();
+    var sortBy = Context.Request.Query["SortBy"].ToString();
+}
+
+<div class="list-group list-group-flush">
+    <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center @(selected == null ? "active" : "")"
+       href="@Url.Action("List", "Product", new { CategoryId = (int?)null, ChipFilter = chip, SearchTerm = search, SortBy = sortBy })">
+        <span>Tüm Kategoriler</span>
+        <i class="bi bi-chevron-right small"></i>
+    </a>
+
+    @foreach (var c in Model)
+    {
+        <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center @(selected == c.Id ? "active" : "")"
+           href="@Url.Action("List", "Product", new { CategoryId = c.Id, ChipFilter = chip, SearchTerm = search, SortBy = sortBy })">
+            <span>@c.Name</span>
+            <i class="bi bi-chevron-right small"></i>
+        </a>
+    }
+</div>

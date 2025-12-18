@@ -1,0 +1,93 @@
+﻿@using UIStoreMVC.Models
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Üyelik Oluştur";
+}
+
+<section class="container my-4 my-lg-5">
+    <div class="auth-wrap auth-bg rounded-5 p-4 p-lg-5 border shadow-sm overflow-hidden">
+        <div class="row g-4 align-items-stretch">
+
+            <!-- SOL: Brand panel -->
+            <div class="col-lg-5">
+                <div class="auth-left h-100 rounded-5 p-4 p-lg-4">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="auth-logo">
+                            <img src="@Url.Content("~/images/brand/momdev-logo-main.png")"
+                                 alt="MomDev Atelier"
+                                 onerror="this.src='/images/no-image.jpg'">
+                        </div>
+                        <div>
+                            <div class="auth-brand">MomDev Atelier</div>
+                            <div class="auth-brand-sub">Anne modu: açık • Odak modu: aktif ✨</div>
+                        </div>
+                    </div>
+
+                    <h1 class="auth-title mb-2">Üyelik Oluştur</h1>
+                    <p class="auth-desc mb-4">
+                        Tek hesapla kampanyalara eriş, alışverişi hızlandır ve üyelik ayrıcalıklarını keşfet.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="auth-chip"><i class="bi bi-shield-check me-1"></i> Güvenli</span>
+                        <span class="auth-chip"><i class="bi bi-lightning-charge me-1"></i> Hızlı</span>
+                        <span class="auth-chip"><i class="bi bi-gift me-1"></i> Fırsatlar</span>
+                    </div>
+
+                    <div class="auth-note mt-4">
+                        <i class="bi bi-info-circle me-1"></i>
+                        İpucu: Kaydolduktan sonra sepetin otomatik senin hesabına bağlanır.
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAĞ: Form card -->
+            <div class="col-lg-7">
+                <div class="auth-card h-100 bg-white rounded-5 p-4 p-lg-5 shadow-sm border">
+                    <form asp-action="Register" method="post" class="auth-form">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label auth-label">Ad Soyad</label>
+                            <input asp-for="FullName" class="form-control auth-input" placeholder="Vildan Çiçekay" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label auth-label">E-posta</label>
+                            <input asp-for="Email" class="form-control auth-input" placeholder="ornek@mail.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label auth-label">Şifre</label>
+                            <input asp-for="Password" type="password" class="form-control auth-input" placeholder="••••••••" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ConfirmPassword" class="form-label auth-label">Şifre Tekrar</label>
+                            <input asp-for="ConfirmPassword" type="password" class="form-control auth-input" placeholder="••••••••" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 auth-btn">
+                            <i class="bi bi-person-plus me-2"></i> Üyelik Oluştur
+                        </button>
+
+                        <div class="text-center mt-3">
+                            <span class="text-muted">Zaten hesabın var mı?</span>
+                            <a class="ms-1 auth-link" asp-action="Login">Giriş yap</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

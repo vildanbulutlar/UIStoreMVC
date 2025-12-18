@@ -1,0 +1,265 @@
+﻿@using Domain.Enums
+@model UIStoreMVC.Models.Membership.MembershipDashboardViewModel
+
+@{
+    ViewData["Title"] = "Üyeliklerim";
+
+    var vipActive = Model?.IsVipActive == true;
+    var agencyActive = Model?.HasAgencyMembership == true;
+
+    // Ajans başvuru durumları
+    var hasAgencyApplication = Model?.HasAgencyApplication == true;
+    var agencyStatus = Model?.AgencyApplicationStatus;
+
+    // Ajans butonu:
+    // - Ajans üyesi -> Panelim (MyAgencyApplication)
+    // - Başvuru varsa -> Başvurun (MyAgencyApplication)
+    // - Başvuru yoksa -> Başvur (AgencyApply)
+    var agencyAction =
+        agencyActive || hasAgencyApplication ? "MyAgencyApplication" : "AgencyApply";
+
+    var agencyBtnText =
+        agencyActive ? "Panelim"
+        : hasAgencyApplication ? "Başvurun"
+        : "Başvur";
+
+    // Ajans rozet text + renk
+    string agencyBadgeClass;
+    string agencyBadgeText;
+    string agencyBadgeIcon;
+
+    if (agencyActive)
+    {
+        agencyBadgeClass = "text-bg-success";
+        agencyBadgeText = "Aktif";
+        agencyBadgeIcon = "bi-building-check";
+    }
+    else if (hasAgencyApplication && agencyStatus == AgencyApplicationStatus.WaitingForReview)
+    {
+        agencyBadgeClass = "text-bg-warning";
+        agencyBadgeText = "İncelemede";
+        agencyBadgeIcon = "bi-clock";
+    }
+    else if (hasAgencyApplication && agencyStatus == AgencyApplicationStatus.Rejected)
+    {
+        agencyBadgeClass = "text-bg-danger";
+        agencyBadgeText = "Reddedildi";
+        agencyBadgeIcon = "bi-x-circle";
+    }
+    else
+    {
+        agencyBadgeClass = "text-bg-secondary";
+        agencyBadgeText = "Pasif";
+        agencyBadgeIcon = "bi-building";
+    }
+}
+
+<div class="container py-4 membership-page">
+
+    <!-- HEADER -->
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="m-0 fw-bold">Üyeliklerim</h2>
+                <span class="badge rounded-pill text-bg-light border">
+                    <i class="bi bi-stars me-1 text-warning"></i> MomDev
+                </span>
+            </div>
+
+            <div class="text-muted mt-1">
+                Üyelik avantajlarını yönet, VIP / Ajans işlemlerini buradan yap.
+            </div>
+        </div>
+
+        <!-- STATUS CHIPS -->
+        <div class="d-flex gap-2 flex-wrap">
+            <span class="badge rounded-pill border px-3 py-2 @(vipActive ? "text-bg-success" : "text-bg-light")">
+                <i class="bi bi-gem me-1"></i>
+                VIP
+                <span class="ms-1 fw-semibold">@((vipActive) ? "Aktif" : "Pasif")</span>
+            </span>
+
+            <span class="badge rounded-pill border px-3 py-2 @((agencyActive || hasAgencyApplication) ? "text-bg-light" : "text-bg-light")">
+                <i class="bi bi-building me-1"></i>
+                Ajans
+                <span class="ms-1 fw-semibold">@agencyBadgeText</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- GRID -->
+    <div class="row g-4 align-items-stretch">
+
+        <!-- VIP CARD -->
+        <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden membership-card">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <div class="text-muted small">Plan</div>
+                            <div class="h3 fw-bold mb-0">VIP Üyelik</div>
+                        </div>
+
+                        <span class="badge rounded-pill @(vipActive ? "text-bg-success" : "text-bg-secondary")">
+                            <i class="bi bi-shield-check me-1"></i>
+                            @(vipActive ? "Aktif" : "Pasif")
+                        </span>
+                    </div>
+
+                    <div class="text-muted mb-3">
+                        Ek indirimler, express kargo, premium destek ve özel kampanyalar.
+                    </div>
+
+                    <div class="d-flex align-items-end gap-2 mb-3">
+                        <div class="display-5 fw-bold m-0">199</div>
+                        <div class="text-muted mb-2">₺ / ay</div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 border rounded-4 bg-light d-flex align-items-center gap-2">
+                                <span class="icon-bubble"><i class="bi bi-tag"></i></span>
+                                <div><strong>%15</strong> ek indirim</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 border rounded-4 bg-light d-flex align-items-center gap-2">
+                                <span class="icon-bubble"><i class="bi bi-truck"></i></span>
+                                <div>Ücretsiz express kargo</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 border rounded-4 bg-light d-flex align-items-center gap-2">
+                                <span class="icon-bubble"><i class="bi bi-headset"></i></span>
+                                <div>Premium destek önceliği</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 border rounded-4 bg-light d-flex align-items-center gap-2">
+                                <span class="icon-bubble"><i class="bi bi-gift"></i></span>
+                                <div>Doğum günü hediyesi</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a asp-controller="Membership" asp-action="Vip"
+                       class="btn btn-primary w-100 rounded-pill py-3">
+                        <i class="bi bi-arrow-repeat me-2"></i>
+                        @(vipActive ? "Yenile" : "Satın Al")
+                    </a>
+
+                    <div class="text-muted text-center small mt-3">
+                        İpucu: VIP ile otomatik ekstra indirim kazanırsın ✨
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AGENCY CARD -->
+        <div class="col-12 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden membership-card">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <div class="text-muted small">Plan</div>
+                            <div class="h3 fw-bold mb-0">Ajans Üyeliği</div>
+                        </div>
+
+                        <span class="badge rounded-pill @agencyBadgeClass">
+                            <i class="bi @agencyBadgeIcon me-1"></i>
+                            @agencyBadgeText
+                        </span>
+                    </div>
+
+                    <div class="text-muted mb-3">
+                        Toptan alımlara özel fiyatlar, kurumsal fatura ve toplu sipariş yönetimi.
+                    </div>
+
+                    <div class="d-flex align-items-end gap-2 mb-3">
+                        <div class="display-5 fw-bold m-0">499</div>
+                        <div class="text-muted mb-2">₺ / ay</div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 border rounded-4 bg-light d-flex align-items-center gap-2">
+                                <span class="icon-bubble"><i class="bi bi-percent"></i></span>
+                                <div><strong>%25-40</strong> toptan indirim</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 border rounded-4 bg-light d-flex align-items-center gap-2">
+                                <span class="icon-bubble"><i class="bi bi-boxes"></i></span>
+                                <div>Toplu sipariş yönetimi</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 border rounded-4 bg-light d-flex align-items-center gap-2">
+                                <span class="icon-bubble"><i class="bi bi-receipt"></i></span>
+                                <div>Kurumsal fatura</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-3 border rounded-4 bg-light d-flex align-items-center gap-2">
+                                <span class="icon-bubble"><i class="bi bi-person-badge"></i></span>
+                                <div>Özel hesap yöneticisi</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Başvuru durumu mesajı *@
+                    @if (!agencyActive && hasAgencyApplication && agencyStatus == AgencyApplicationStatus.WaitingForReview)
+                    {
+                        <div class="alert alert-warning border-0 rounded-4 small mb-3">
+                            <i class="bi bi-clock me-1"></i>
+                            Başvurunuz alındı, <strong>inceleniyor</strong>. Onaylanınca ajans üyeliğin aktif olacak.
+                        </div>
+                    }
+                    else if (!agencyActive && hasAgencyApplication && agencyStatus == AgencyApplicationStatus.Rejected)
+                    {
+                        <div class="alert alert-danger border-0 rounded-4 small mb-3">
+                            <i class="bi bi-x-circle me-1"></i>
+                            Başvurunuz <strong>reddedildi</strong>.
+                            @if (!string.IsNullOrWhiteSpace(Model?.AgencyApplicationRejectionReason))
+                            {
+                                <div class="mt-1 text-muted">
+                                    Sebep: @Model.AgencyApplicationRejectionReason
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <a asp-controller="Membership" asp-action="@agencyAction"
+                       class="btn btn-outline-primary w-100 rounded-pill py-3">
+                        <i class="bi bi-rocket-takeoff me-2"></i> @agencyBtnText
+                    </a>
+
+                    <div class="text-muted text-center small mt-3">
+                        Başvurun onaylanınca ajans avantajları otomatik aktif olur.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .membership-card {
+        background: radial-gradient(1200px 300px at 20% 0%, rgba(67,97,238,.10), transparent 60%), radial-gradient(900px 260px at 90% 10%, rgba(76,201,240,.10), transparent 55%), #fff;
+    }
+
+    .icon-bubble {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13,110,253,.08);
+        color: #0d6efd;
+        flex: 0 0 auto;
+    }
+</style>

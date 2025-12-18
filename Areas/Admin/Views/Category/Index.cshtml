@@ -1,0 +1,217 @@
+﻿@using Application.DTOs.CategoryDTOs
+@model IEnumerable<CategoryDto>
+
+@{
+    ViewData["Title"] = "Kategori Listesi";
+    var index = 1;
+}
+
+<div class="category-page">
+
+    <!-- Üst başlık alanı -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <div class="category-icon-wrap">
+                    <i class="bi bi-tags-fill"></i>
+                </div>
+                <h2 class="page-title mb-0">Kategori Listesi</h2>
+            </div>
+            <p class="text-muted mb-0">
+                Sistemde tanımlı tüm kategorileri buradan yönetebilirsiniz.
+            </p>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2">
+            <a asp-area="Admin" asp-controller="Category" asp-action="Create"
+               class="btn btn-success d-flex align-items-center gap-2">
+                <i class="bi bi-plus-circle"></i>
+                <span>Yeni Kategori</span>
+            </a>
+
+            <a asp-area="Admin" asp-controller="Category" asp-action="Trash"
+               class="btn btn-outline-danger d-flex align-items-center gap-2">
+                <i class="bi bi-trash3"></i>
+                <span>Çöp Kutusu</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Arama ve info satırı -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+        <div class="text-muted small">
+            Toplam <strong>@Model.Count()</strong> kategori listeleniyor.
+        </div>
+
+        <div class="input-group input-group-sm category-search" style="max-width: 260px;">
+            <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text"
+                   id="categorySearchInput"
+                   class="form-control border-start-0"
+                   placeholder="Kategori ara...">
+        </div>
+    </div>
+
+    <!-- Kategori tablosu -->
+    <div class="card category-card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table mb-0 category-table align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width:60px;">#</th>
+                            <th>Kategori Adı</th>
+                            <th style="width: 160px;" class="text-center">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryTableBody">
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">
+                                    Henüz kategori eklenmemiş.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="text-muted">@index</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="dot-badge"></div>
+                                            <span class="fw-semibold">@item.Name</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center gap-1">
+
+                                            <!-- DÜZENLE (GET) -->
+                                            <a href="@Url.Action("Update", "Category", new { area = "Admin", id = item.Id })"
+                                               class="btn btn-warning btn-sm"
+                                               title="Düzenle">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+
+
+                                            <!-- SİL (POST) -->
+                                            <form asp-area="Admin"
+                                                  asp-controller="Category"
+                                                  asp-action="Delete"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  class="d-inline"
+                                                  onsubmit="return confirm('@item.Name kategorisini silmek istediğinize emin misiniz?');">
+                                                <button type="submit"
+                                                        class="btn btn-danger btn-sm"
+                                                        title="Sil">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            </form>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .category-page {
+            background: transparent;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .category-icon-wrap {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            color: #4f46e5;
+            font-size: 1.4rem;
+        }
+
+        .category-card {
+            border-radius: 18px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .category-table thead {
+            background: #f9fafb;
+        }
+
+            .category-table thead th {
+                font-size: .78rem;
+                text-transform: uppercase;
+                letter-spacing: .06em;
+                color: #6b7280;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+        .category-table tbody tr {
+            transition: background-color 0.18s ease, transform 0.12s ease;
+        }
+
+            .category-table tbody tr:hover {
+                background: #f5f7ff;
+                transform: translateX(2px);
+            }
+
+        .category-table td {
+            border-top: 1px solid #f1f5f9;
+            font-size: .95rem;
+        }
+
+        .dot-badge {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: #4f46e5;
+        }
+
+        .category-search input:focus {
+            box-shadow: none;
+            border-color: #4f46e5;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Basit client-side arama
+        const searchInput = document.getElementById('categorySearchInput');
+        const tableBody = document.getElementById('categoryTableBody');
+
+        if (searchInput && tableBody) {
+            searchInput.addEventListener('input', function () {
+                const term = this.value.toLowerCase();
+                const rows = tableBody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    const text = row.innerText.toLowerCase();
+                    row.style.display = text.includes(term) ? '' : 'none';
+                });
+            });
+        }
+    </script>
+}

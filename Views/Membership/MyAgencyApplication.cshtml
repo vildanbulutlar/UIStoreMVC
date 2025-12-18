@@ -1,0 +1,43 @@
+﻿@using Application.DTOs.CustomerDTOs
+@using Domain.Enums
+@model MyAgencyApplicationDto
+
+<h3>Ajans Başvurun</h3>
+
+@if (Model is null)
+{
+    <p>Henüz ajans başvurun bulunmuyor.</p>
+}
+else
+{
+    <p>
+        <strong>Firma:</strong> @Model.CompanyName <br />
+        <strong>Başvuru Tarihi:</strong> @Model.AppliedDate.ToString("dd.MM.yyyy HH:mm") <br />
+        <strong>Durum:</strong>
+        @switch (Model.ApplicationStatus)
+        {
+            case AgencyApplicationStatus.WaitingForReview:
+                @:<span class="badge bg-warning text-dark">İncelemede</span>
+                break;
+            case AgencyApplicationStatus.Approved:
+                @:<span class="badge bg-success">Onaylandı</span>
+                break;
+            case AgencyApplicationStatus.Rejected:
+                @:<span class="badge bg-danger">Reddedildi</span>
+                break;
+        }
+    </p>
+
+    @if (Model.ApplicationStatus == AgencyApplicationStatus.Approved)
+    {
+        <p class="text-success">
+            Ajans başvurun onaylandı. Üyeliğin ajans üyesi olarak güncellendi. 🎉
+        </p>
+    }
+    else if (Model.ApplicationStatus == AgencyApplicationStatus.Rejected)
+    {
+        <p class="text-danger">
+            Ajans başvurun reddedildi. Dilersen bilgilerini güncelleyip yeniden başvurabilirsin.
+        </p>
+    }
+}

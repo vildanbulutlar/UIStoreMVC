@@ -1,0 +1,109 @@
+﻿@using Application.DTOs.ProductDTOs
+@model CreateProductDto
+
+@{
+    ViewData["Title"] = "Yeni Ürün Ekle";
+}
+
+<div class="card shadow-sm border-0 admin-card">
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="fw-bold text-primary mb-1">
+                    <i class="bi bi-plus-circle me-2"></i> Yeni Ürün Ekle
+                </h2>
+                <p class="text-muted small mb-0">Mağazanıza yeni ürün ekleyin.</p>
+            </div>
+
+            <a class="btn btn-outline-secondary"
+               asp-area="Admin" asp-controller="Product" asp-action="Index">
+                <i class="bi bi-arrow-left me-1"></i> Listeye Dön
+            </a>
+        </div>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+
+        <!-- ✅ ÖNEMLİ: enctype şart -->
+        <form asp-area="Admin"
+              asp-controller="Product"
+              asp-action="Create"
+              method="post"
+              enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label asp-for="Name" class="form-label fw-semibold">Ürün Adı</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label asp-for="Price" class="form-label fw-semibold">Fiyat</label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3">
+                    <label asp-for="Stock" class="form-label fw-semibold">Stok</label>
+                    <input asp-for="Stock" class="form-control" />
+                    <span asp-validation-for="Stock" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Discount" class="form-label fw-semibold">İndirim Oranı (0–1)</label>
+                    <input asp-for="Discount" type="number" step="0.01" min="0" max="1" class="form-control" />
+                    <span asp-validation-for="Discount" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="CategoryId" class="form-label fw-semibold">Kategori</label>
+                    <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                        <option value="">Kategori seçin...</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="form-check mt-3">
+                        <input asp-for="IsFeatured" class="form-check-input" />
+                        <label asp-for="IsFeatured" class="form-check-label">Öne çıkan ürün</label>
+                    </div>
+                </div>
+
+                <!-- ✅ TEK dosya alanı, formun içinde -->
+                <div class="col-12">
+                    <label asp-for="ImageFile" class="form-label fw-semibold">Ürün Görseli</label>
+                    <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+                    <span asp-validation-for="ImageFile" class="text-danger small"></span>
+                    <small class="text-muted">Seçmezsen otomatik no-image atanır.</small>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label fw-semibold">Açıklama</label>
+                    <textarea asp-for="Description" rows="4" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-save-fill me-1"></i> Kaydet
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

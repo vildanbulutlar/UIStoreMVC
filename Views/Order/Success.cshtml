@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Sipariş Başarılı";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-center">
+
+                <div class="mb-3">
+                    <i class="bi bi-check-circle-fill text-primary fs-1"></i>
+                </div>
+
+                <h3 class="fw-bold mb-2">
+                    Siparişiniz başarıyla alındı
+                </h3>
+
+                @if (ViewBag.OrderId != null)
+                {
+                    <p class="text-muted mb-2">
+                        Sipariş Numaranız:
+                        <strong class="text-dark">#@ViewBag.OrderId</strong>
+                    </p>
+                }
+
+                <p class="text-muted mb-4">
+                    Sipariş detaylarını <strong>Siparişlerim</strong> sayfasından takip edebilirsiniz.
+                </p>
+
+                <div class="d-flex justify-content-center gap-2">
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="btn btn-outline-primary px-4">
+                        Alışverişe Devam Et
+                    </a>
+
+                    <a asp-controller="Order"
+                       asp-action="MyOrders"
+                       class="btn btn-primary px-4">
+                        Siparişlerime Git
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

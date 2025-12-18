@@ -1,0 +1,30 @@
+{
+  "categories": [
+    {
+      "name": "Kitaplar",
+      "icon": "📚"
+    },
+    {
+      "name": "Aksesuarlar",
+      "icon": "⌨️"
+    }
+  ],
+  "products": [
+    {
+      "name": "C# ile Temel Programlama",
+      "description": "Yeni başlayanlar için örnekli anlatım",
+      "price": 299.99,
+      "stock": 120,
+      "discount": 0.9,
+      "isFeatured": true,
+      "categoryName": "Kitaplar",
+      "images": {
+        "cover": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c",
+        "gallery": [
+          "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f",
+          "https://images.unsplash.com/photo-1512820790803-83ca734da794"
+        ]
+      }
+    }
+  ]
+}

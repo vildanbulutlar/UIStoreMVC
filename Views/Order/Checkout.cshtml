@@ -1,0 +1,488 @@
+﻿@using UIStoreMVC.Models.Checkout
+@model CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Siparişi Tamamla";
+
+    var cartHasItems = Model?.Cart?.Items != null && Model.Cart.Items.Any();
+    var selectedId = Model?.SelectedAddressId;
+}
+
+<div class="container-xxl checkout-page py-3 py-lg-4">
+
+    <!-- HEADER (daha kompakt) -->
+    <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
+        <div>
+            <h2 class="checkout-title mb-1">Siparişi Tamamla</h2>
+            <div class="checkout-subtitle">Adresini seç, ödeme bilgilerini gir ve siparişi tamamla.</div>
+        </div>
+
+        <span class="badge md-badge md-badge-primary">
+            <i class="bi bi-shield-check me-1"></i> Güvenli checkout
+        </span>
+    </div>
+
+    @if (TempData["Warning"] != null)
+    {
+        <div class="alert md-alert md-alert-warning mb-3">
+            <i class="bi bi-exclamation-triangle me-1"></i> @TempData["Warning"]
+        </div>
+    }
+
+    <form asp-action="Checkout" asp-controller="Order" method="post">
+        @Html.AntiForgeryToken()
+
+        <!-- Daha dengeli: 6 / 6 (sağ taraf genişlesin) -->
+        <div class="row g-3 align-items-start">
+
+            <!-- SOL -->
+            <div class="col-12 col-lg-6">
+
+                <!-- Kullanıcı (mini) -->
+                <div class="card md-card mb-3">
+                    <div class="card-body p-3 d-flex align-items-center justify-content-between gap-2">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-bubble">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div class="lh-sm">
+                                <div class="text-muted small">Kullanıcı</div>
+                                <div class="fw-semibold">@Model.User.FullName</div>
+                                <div class="text-muted small">@Model.User.Email</div>
+                            </div>
+                        </div>
+
+                        <span class="badge md-badge md-badge-primary">
+                            <i class="bi bi-check2-circle me-1"></i> Doğrulandı
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Teslimat Adresi -->
+                <div class="card md-card">
+                    <div class="card-body p-3 p-lg-4">
+
+                        <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                            <div>
+                                <div class="section-title mb-1">Teslimat Adresi</div>
+                                <div class="text-muted small">Sipariş bu adrese teslim edilecek.</div>
+                            </div>
+
+                            <a asp-controller="Address" asp-action="Create"
+                               class="btn btn-outline-primary rounded-pill px-3 py-2">
+                                <i class="bi bi-plus-circle me-1"></i> Yeni Adres
+                            </a>
+                        </div>
+
+                        @if (Model.Addresses != null && Model.Addresses.Any())
+                        {
+                            <!-- Çok yer kaplamasın: scroll -->
+                            <div class="address-scroll mt-3">
+                                <div class="address-list">
+                                    @foreach (var addr in Model.Addresses)
+                                    {
+                                        var isSelected = selectedId == addr.Id;
+
+                                        <label class="address-item @(isSelected ? "active" : "")">
+                                            <input type="radio"
+                                                   name="SelectedAddressId"
+                                                   value="@addr.Id"
+                                                   class="form-check-input mt-1"
+                                                   @(isSelected ? "checked" : "") />
+
+                                            <div class="w-100">
+                                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                                    <div class="fw-semibold">@addr.Title</div>
+
+                                                    @if (isSelected)
+                                                    {
+                                                        <span class="badge md-badge md-badge-primary">
+                                                            Varsayılan
+                                                        </span>
+                                                    }
+                                                </div>
+
+                                                <div class="text-muted small mt-1">
+                                                    @addr.FullAddress
+                                                </div>
+                                            </div>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="text-muted small mt-3">
+                                <i class="bi bi-info-circle me-1"></i>
+                                İpucu: Varsayılan adres controller tarafından otomatik seçilir.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert md-alert md-alert-info mt-3 mb-0">
+                                Kayıtlı adresiniz bulunmuyor. Lütfen önce yeni bir adres ekleyin.
+                            </div>
+                        }
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert md-alert md-alert-danger mt-3 mb-0">
+                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                {
+                                    <div>@error.ErrorMessage</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAĞ -->
+            <div class="col-12 col-lg-6">
+                <div class="sticky-lg-top" style="top: 92px;">
+
+                    <!-- Sepet Özeti (kompakt + bulanık olmayan rozet) -->
+                    <div class="card md-card mb-3">
+                        <div class="card-body p-3 p-lg-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="section-title mb-0">Sepet Özeti</div>
+                                <span class="badge md-badge md-badge-neutral">
+                                    <i class="bi bi-receipt me-1"></i> Özet
+                                </span>
+                            </div>
+
+                            @if (cartHasItems)
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle mb-2">
+                                        <thead class="small text-muted">
+                                            <tr>
+                                                <th>Ürün</th>
+                                                <th class="text-end">Adet</th>
+                                                <th class="text-end">Ara</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model.Cart.Items)
+                                            {
+                                                <tr>
+                                                    <td class="fw-semibold text-truncate" style="max-width: 320px;">
+                                                        @item.ProductName
+                                                    </td>
+                                                    <td class="text-end">@item.Quantity</td>
+                                                    <td class="text-end fw-semibold">
+                                                        @((item.Price * item.Quantity).ToString("C"))
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="d-flex justify-content-between pt-2 border-top">
+                                    <div class="text-muted">Toplam</div>
+                                    <div class="fw-bold">@Model.Cart.TotalPrice.ToString("C")</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert md-alert md-alert-warning mb-0">
+                                    Sepetiniz boş.
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Ödeme (mavi rozet + mavi buton) -->
+                    <div class="card md-card">
+                        <div class="card-body p-3 p-lg-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="section-title mb-0">Ödeme</div>
+                                <span class="badge md-badge md-badge-primary">
+                                    <i class="bi bi-lock me-1"></i> Güvenli işlem
+                                </span>
+                            </div>
+
+                            <div class="text-muted small mb-3">
+                                Kart bilgilerini gir ve ödemeyi tamamla.
+                            </div>
+
+                            <!-- Kart Önizleme (standart kalsın) -->
+                            <div class="pay-card mb-3">
+                                <div class="pay-card-top">
+                                    <div class="brand">MomDev Atelier</div>
+                                    <i class="bi bi-credit-card-2-front"></i>
+                                </div>
+
+                                <div class="pay-card-number cardNumberPreview">•••• •••• •••• ••••</div>
+
+                                <div class="pay-card-bottom">
+                                    <div>
+                                        <div class="label">Kart Sahibi</div>
+                                        <div class="value cardNamePreview">AD SOYAD</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="label">SKT</div>
+                                        <div class="value cardExpPreview">AA/YY</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Form alanları (ID'ler aynı: script bozulmaz) -->
+                            <div class="mb-2">
+                                <label class="form-label fw-semibold">Kart Üzerindeki İsim</label>
+                                <input id="cardName" type="text" name="CardHolderName" value="@Model.CardHolderName"
+                                       class="form-control rounded-4" placeholder="Ad Soyad" />
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label fw-semibold">Kart Numarası</label>
+                                <input id="cardNumber" type="text" name="CardNumber" value="@Model.CardNumber"
+                                       class="form-control rounded-4" placeholder="1234 5678 9012 3456" />
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-7">
+                                    <label class="form-label fw-semibold">Son Kullanma</label>
+                                    <input id="cardExp" type="text" class="form-control rounded-4" placeholder="AA/YY" />
+                                </div>
+                                <div class="col-5">
+                                    <label class="form-label fw-semibold">CVV</label>
+                                    <input type="password" name="Cvv" value="@Model.Cvv"
+                                           class="form-control rounded-4" placeholder="123" />
+                                </div>
+                            </div>
+
+                            <!-- Asıl POST alanları -->
+                            <input type="hidden" name="ExpiryMonth" value="@Model.ExpiryMonth" />
+                            <input type="hidden" name="ExpiryYear" value="@Model.ExpiryYear" />
+
+                            <button type="submit"
+                                    class="btn btn-primary w-100 rounded-pill py-3 mt-2"
+                                    @(cartHasItems ? "" : "disabled")>
+                                <i class="bi bi-lock me-2"></i> Ödemeyi Tamamla
+                            </button>
+
+                            <div class="text-muted small mt-2">
+                                Demo ödeme: gerçek çekim yapılmaz.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // ✅ Standart kart scriptin: aynı ID'ler, aynı mantık
+        const nameInput = document.getElementById("cardName");
+        const numInput  = document.getElementById("cardNumber");
+        const expInput  = document.getElementById("cardExp");
+
+        const namePrev = document.querySelector(".cardNamePreview");
+        const numPrev  = document.querySelector(".cardNumberPreview");
+        const expPrev  = document.querySelector(".cardExpPreview");
+
+        function formatCardNumber(v){
+            v = (v || "").replace(/\D/g, "").slice(0,16);
+            return v.replace(/(.{4})/g, "$1 ").trim();
+        }
+
+        nameInput?.addEventListener("input", () => {
+            namePrev.textContent = (nameInput.value || "AD SOYAD").toUpperCase();
+        });
+
+        numInput?.addEventListener("input", () => {
+            const f = formatCardNumber(numInput.value);
+            numInput.value = f;
+            numPrev.textContent = f ? f.replace(/\d(?=\d{4})/g, "•") : "•••• •••• •••• ••••";
+        });
+
+        expInput?.addEventListener("input", () => {
+            let v = (expInput.value || "").replace(/[^\d]/g, "").slice(0,4);
+            if (v.length >= 3) v = v.slice(0,2) + "/" + v.slice(2);
+            expInput.value = v;
+            expPrev.textContent = v || "AA/YY";
+
+            const mm = v.slice(0,2);
+            const yy = v.slice(3,5);
+
+            const monthHidden = document.querySelector('input[name="ExpiryMonth"]');
+            const yearHidden  = document.querySelector('input[name="ExpiryYear"]');
+            if(monthHidden) monthHidden.value = mm || "";
+            if(yearHidden)  yearHidden.value  = yy || "";
+        });
+    </script>
+}
+
+<style>
+    /* Genel tipografi: ana sayfayla uyum (italik yok, net başlık) */
+    .checkout-title {
+        font-weight: 800;
+        letter-spacing: -.02em;
+        color: #0f172a;
+    }
+
+    .checkout-subtitle {
+        color: #64748b;
+        font-size: .98rem;
+    }
+
+    /* Kartlar: ana sayfadaki yumuşak shadow */
+    .md-card {
+        border: 0;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(2, 6, 23, .06);
+        background: #fff;
+    }
+
+    .section-title {
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: #0f172a;
+        letter-spacing: -.01em;
+    }
+
+    /* Rozetler: bulanıklık yok (opacity/backdrop yok) */
+    .md-badge {
+        border-radius: 999px;
+        padding: .45rem .75rem;
+        font-weight: 600;
+        border: 1px solid rgba(15,23,42,.10);
+        background: #fff;
+        color: #0f172a;
+        white-space: nowrap;
+    }
+
+    .md-badge-primary {
+        border-color: rgba(13,110,253,.18);
+        background: rgba(13,110,253,.08);
+        color: #0b5ed7;
+    }
+
+    .md-badge-neutral {
+        border-color: rgba(15,23,42,.10);
+        background: rgba(15,23,42,.04);
+        color: #0f172a;
+    }
+
+    .md-alert {
+        border: 0;
+        border-radius: 18px;
+        padding: .85rem 1rem;
+    }
+
+    .md-alert-warning {
+        background: rgba(255,193,7,.18);
+        color: #7a5b00;
+    }
+
+    .md-alert-info {
+        background: rgba(13,202,240,.18);
+        color: #055160;
+    }
+
+    .md-alert-danger {
+        background: rgba(220,53,69,.14);
+        color: #842029;
+    }
+
+    .icon-bubble {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13,110,253,.10);
+        color: #0d6efd;
+        flex: 0 0 auto;
+    }
+
+    /* Adres listesi: sayfayı uzatmasın */
+    .address-scroll {
+        max-height: 230px; /* ihtiyaca göre 200-280 oynayabilirsin */
+        overflow: auto;
+        padding-right: 4px;
+    }
+
+    .address-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .address-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        border: 1px solid rgba(15,23,42,.10);
+        border-radius: 16px;
+        padding: 12px 14px;
+        background: #fff;
+        cursor: pointer;
+        transition: .15s ease;
+    }
+
+        .address-item:hover {
+            border-color: rgba(13,110,253,.25);
+            box-shadow: 0 10px 20px rgba(13,110,253,.06);
+        }
+
+        .address-item.active {
+            border-color: rgba(13,110,253,.45);
+            background: rgba(13,110,253,.03);
+            box-shadow: 0 12px 24px rgba(13,110,253,.08);
+        }
+
+    /* Kart görseli aynı, sadece çok yer kaplamasın diye kompakt */
+    .pay-card {
+        border-radius: 18px;
+        padding: 14px 16px;
+        color: #fff;
+        background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(59,130,246,.70));
+        box-shadow: 0 16px 35px rgba(37,99,235,.18);
+    }
+
+    .pay-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        opacity: .95;
+        margin-bottom: 10px;
+    }
+
+        .pay-card-top .brand {
+            font-weight: 700;
+            opacity: .95;
+        }
+
+    .pay-card-number {
+        font-size: 16px;
+        letter-spacing: 2px;
+        margin: 10px 0 14px;
+        opacity: .95;
+        font-weight: 700;
+    }
+
+    .pay-card-bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        opacity: .95;
+    }
+
+        .pay-card-bottom .label {
+            font-size: 12px;
+            opacity: .85;
+        }
+
+        .pay-card-bottom .value {
+            font-size: 14px;
+            font-weight: 800;
+        }
+</style>

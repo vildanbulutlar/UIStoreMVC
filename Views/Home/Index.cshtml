@@ -1,0 +1,148 @@
+﻿@model UIStoreMVC.Controllers.HomeViewModel
+
+@{
+    ViewData["Title"] = "MomDev Atelier";
+}
+
+<section class="container my-5">
+    <div class="hero-bg rounded-5 p-4 p-lg-5 border shadow-sm position-relative overflow-hidden">
+
+        <div class="row g-4 align-items-center">
+
+            <!-- SOL -->
+            <div class="col-lg-7">
+                <div class="d-flex align-items-center gap-4 mb-4">
+                    <!-- Logo rozet -->
+                    <div class="logo-bubble shadow-sm">
+                        <img src="~/images/brand/momdev-logo-main.png"
+                             alt="MomDev Atelier"
+                             class="img-fluid"
+                             style="max-height:92px;">
+                    </div>
+
+                    <div>
+                        <h1 class="display-6 fw-bold mb-2">MomDev Atelier</h1>
+                        <p class="text-muted mb-0">
+                            “Ne arıyorsun anne? Odaklanma köşen mi, eğitim mi, minik molalar mı?”
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="/Product/List" class="btn btn-primary btn-lg rounded-pill px-4">
+                        <i class="bi bi-bag me-2"></i> Alışverişe Başla
+                    </a>
+
+                    <a href="/Product/List?ChipFilter=discounted" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                        <i class="bi bi-heart me-2"></i> Mini İndirimler
+                    </a>
+                </div>
+            </div>
+
+            <!-- SAĞ -->
+            <div class="col-lg-5">
+                <div class="search-card p-4 rounded-4 shadow-sm border bg-white">
+                    <form class="d-flex gap-2 align-items-center" method="get" action="/Product/List">
+                        <input name="q"
+                               class="form-control hero-search-input rounded-pill"
+                               placeholder="Kitap, kurs, aksesuar..."
+                               autocomplete="off" />
+
+                        <button class="btn btn-primary hero-search-btn rounded-pill" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+
+
+             
+
+                    <small class="text-muted d-block mt-3">
+                        İpucu: “kurs”, “home office”, “mouse” yaz <span class="ms-1">👀</span>
+                    </small>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- BOŞ VERİ -->
+@if (Model == null || (Model.Categories == null || !Model.Categories.Any()))
+{
+    <div class="container">
+        <div class="alert alert-info">
+            Henüz kategori/ürün eklenmemiş. Admin panelden JSON import yaptıktan sonra burası dolacak.
+        </div>
+    </div>
+}
+
+<!-- POPÜLER KATEGORİLER (6) -->
+@if (Model?.Categories != null && Model.Categories.Any())
+{
+    var homeCategories = Model.Categories.Take(6).ToList();
+
+    <div class="container my-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h4 fw-bold m-0">
+                <i class="bi bi-grid-1x2 me-2 text-primary"></i> Popüler Kategoriler
+            </h2>
+            <a asp-controller="Product" asp-action="List" class="small text-decoration-none">
+                Tüm kategoriler <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-3">
+            @foreach (var category in homeCategories)
+            {
+                <div class="col-6 col-md-4 col-lg-2">
+                    <a asp-controller="Product"
+                       asp-action="List"
+                       asp-route-categoryId="@category.Id"
+                       class="text-decoration-none">
+                        <div class="p-3 rounded-4 border bg-white shadow-sm text-center h-100 category-tile">
+                            <div class="fs-2 mb-2">@category.Icon</div>
+                            <div class="fw-semibold">@category.Name</div>
+                            <div class="text-muted small">Keşfet</div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- PROMO BLOKLAR (Home vitrin) -->
+        <div class="row g-3 mt-4">
+            <div class="col-12 col-lg-6">
+                <div class="p-4 rounded-4 border bg-white shadow-sm h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="fw-bold">
+                            <i class="bi bi-tag me-2 text-danger"></i> Mini İndirimler
+                        </div>
+                        <a asp-controller="Product" asp-action="List" asp-route-ChipFilter="discounted" class="small text-decoration-none">
+                            Hepsini gör <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="text-muted small">
+                        Küçük ama tatlı indirimler — “sepete ekle” etkisi yüksek 😄
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="p-4 rounded-4 border bg-white shadow-sm h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="fw-bold">
+                            <i class="bi bi-sparkle me-2 text-primary"></i> Yeni Gelenler
+                        </div>
+                        <a asp-controller="Product" asp-action="List" asp-route-ChipFilter="new" class="small text-decoration-none">
+                            Hepsini gör <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="text-muted small">
+                        Yeni eklenen ürünleri burada vitrine alalım.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,316 @@
+﻿@using Application.DTOs.CartItemDTOs
+@model IEnumerable<CartItemDto>
+
+@{
+    ViewData["Title"] = "Sepetim";
+
+    decimal totalPrice = Model?.Sum(x => x.Price * x.Quantity) ?? 0m;
+    decimal shippingPrice = totalPrice >= 1000 ? 0 : 79;
+    decimal payableTotal = totalPrice + shippingPrice;
+
+    decimal freeShipLimit = 1000m;
+    decimal remaining = freeShipLimit - totalPrice;
+    if (remaining < 0) remaining = 0;
+
+    var progress = freeShipLimit <= 0 ? 0 : (int)Math.Min(100, Math.Round((double)(totalPrice / freeShipLimit * 100)));
+    var backUrl = ViewBag.ReturnUrl as string;
+}
+
+<div class="container py-4 cart-page">
+
+    <!-- HEADER -->
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
+        <div>
+            <h2 class="fw-bold mb-1">Sepetim</h2>
+            <div class="text-muted">Sepetini düzenle, adetleri değiştir ve siparişini tamamla.</div>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+            @if (!string.IsNullOrEmpty(backUrl))
+            {
+                <a href="@backUrl" class="btn btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Alışverişe Geri Dön
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Product" asp-action="List" class="btn btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Alışverişe Geri Dön
+                </a>
+            }
+
+            @if (Model != null && Model.Any())
+            {
+                <form asp-action="Clear" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-outline-danger rounded-pill px-3">
+                        <i class="bi bi-trash3 me-1"></i> Sepeti Temizle
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <!-- EMPTY -->
+    @if (Model == null || !Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="icon-bubble"><i class="bi bi-cart-x"></i></span>
+                    <div>
+                        <div class="fw-semibold">Sepetinizde ürün bulunmuyor.</div>
+                        <div class="text-muted small">Ürün listesine dönüp alışverişe başlayabilirsin.</div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <a asp-controller="Product" asp-action="List" class="btn btn-primary rounded-pill px-4">
+                        Ürünlere Git
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- FREE SHIPPING BAR -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-3 p-lg-4">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="icon-bubble icon-bubble-soft">
+                            <i class="bi bi-truck"></i>
+                        </span>
+
+                        @if (shippingPrice == 0 && totalPrice > 0)
+                        {
+                            <div>
+                                <div class="fw-semibold">Kargon ücretsiz! 🎉</div>
+                                <div class="text-muted small">1000₺ üzeri alışveriş yaptığın için kargo ücreti yok.</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <div class="fw-semibold">Ücretsiz kargo fırsatı</div>
+                                <div class="text-muted small">
+                                    1000₺ üzeri alışverişte kargo ücretsiz. <strong>@remaining.ToString("C")</strong> daha ekleyebilirsin.
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="text-end ms-auto" style="min-width: 320px;">
+                        <div class="d-flex justify-content-between text-muted small mb-1">
+                            <span>@totalPrice.ToString("C")</span>
+                            <span>@freeShipLimit.ToString("C")</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar" style="width:@progress%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 align-items-start">
+
+            <!-- LEFT: ITEMS -->
+            <div class="col-12 col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white border-0 p-4 pb-2">
+                        <div class="fw-bold">Sepet Ürünleri</div>
+                        <div class="text-muted small">Adetleri +/- ile değiştir, fiyat otomatik güncellenir.</div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0 cart-table">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Ürün</th>
+                                    <th class="text-center" style="width:180px;">Adet</th>
+                                    <th class="text-end" style="width:160px;">Birim</th>
+                                    <th class="text-end" style="width:160px;">Ara Toplam</th>
+                                    <th class="text-end pe-4" style="width:120px;"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="fw-semibold">@item.ProductName</div>
+                                            <div class="text-muted small">Ürün No: @item.ProductId</div>
+                                        </td>
+
+                                        <td class="text-center">
+                                            <div class="qty-wrap">
+                                                <!-- Azalt -->
+                                                <form asp-action="UpdateQuantity" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                                    <input type="hidden" name="quantity" value="@(item.Quantity - 1)" />
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-secondary qty-btn"
+                                                            @(item.Quantity <= 1 ? "disabled" : "")>
+                                                        <i class="bi bi-dash"></i>
+                                                    </button>
+                                                </form>
+
+                                                <span class="qty-value">@item.Quantity</span>
+
+                                                <!-- Artır -->
+                                                <form asp-action="UpdateQuantity" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="productId" value="@item.ProductId" />
+                                                    <input type="hidden" name="quantity" value="@(item.Quantity + 1)" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary qty-btn">
+                                                        <i class="bi bi-plus"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+
+                                        <td class="text-end fw-semibold">
+                                            @item.Price.ToString("C")
+                                        </td>
+
+                                        <td class="text-end fw-bold">
+                                            @((item.Price * item.Quantity).ToString("C"))
+                                        </td>
+
+                                        <td class="text-end pe-4">
+                                            <form asp-action="Remove" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                                    Kaldır
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card-footer bg-white border-0 p-4 pt-3">
+                        <div class="text-muted small">
+                            İpucu: VIP aktifse sepette otomatik indirim bilgisini burada gösterebilirsin ✨
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: SUMMARY -->
+            <div class="col-12 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <div class="fw-bold">Sipariş Özeti</div>
+                            <span class="badge rounded-pill text-bg-light border">
+                                <i class="bi bi-receipt me-1"></i> Özet
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Ara Toplam</span>
+                            <span class="fw-semibold">@totalPrice.ToString("C")</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-muted">Kargo</span>
+                            <span class="fw-semibold">
+                                @(shippingPrice == 0 ? "Ücretsiz" : shippingPrice.ToString("C"))
+                            </span>
+                        </div>
+
+                        <hr />
+
+                        <div class="d-flex justify-content-between align-items-end mb-3">
+                            <span class="fw-semibold">Ödenecek</span>
+                            <span class="display-6 fw-bold m-0 cart-total">@payableTotal.ToString("C")</span>
+                        </div>
+
+                        <a asp-controller="Order" asp-action="Checkout"
+                           class="btn btn-success w-100 rounded-pill py-3">
+                            <i class="bi bi-bag-check me-2"></i> Siparişi Tamamla
+                        </a>
+
+                        <div class="text-muted small text-center mt-2">
+                            Ödeme adımında adres ve teslimat seçeneklerini seçebilirsin.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
+<style>
+    /* MomDev uyumu (yumuşak kart, hafif gradyan, aynı font havası) */
+    .cart-page .card {
+        border-radius: 18px;
+    }
+
+    .cart-page .cart-table thead th {
+        font-weight: 700;
+    }
+
+    .cart-page .cart-table tbody tr {
+        border-color: rgba(0,0,0,.06);
+    }
+
+    .icon-bubble {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13,110,253,.10);
+        color: #0d6efd;
+        flex: 0 0 auto;
+    }
+
+    .icon-bubble-soft {
+        background: rgba(13,110,253,.08);
+    }
+
+    .qty-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 10px;
+        border: 1px solid rgba(0,0,0,.08);
+        border-radius: 999px;
+        background: #fff;
+    }
+
+    .qty-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .qty-value {
+        min-width: 22px;
+        display: inline-block;
+        font-weight: 700;
+    }
+
+    .cart-total {
+        font-size: 2rem;
+        letter-spacing: -0.02em;
+    }
+
+    .progress {
+        background: rgba(13,110,253,.12);
+    }
+</style>

@@ -1,0 +1,162 @@
+﻿@using Application.DTOs.OrderDTOs
+@using Domain.Enums
+@model IEnumerable<OrderDto>
+
+@{
+    ViewData["Title"] = "Siparişler";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 mb-1">Siparişler</h1>
+        <p class="text-muted small mb-0">
+            Tüm müşteri siparişlerini görüntüleyin ve durumlarını yönetin.
+        </p>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card shadow-sm border-0">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle orders-table mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width:60px;">#</th>
+                        <th>Müşteri</th>
+                        <th style="width:220px;">Tarih</th>
+                        <th style="width:180px;">Toplam</th>
+                        <th style="width:120px;">Ürün</th>
+                        <th style="width:260px;">Durum</th>
+                        <th class="text-end" style="width:130px;">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                Henüz sipariş bulunmuyor.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var index = 1;
+                        foreach (var order in Model.OrderByDescending(o => o.OrderDate))
+                        {
+                            // rozet rengi
+                            var badgeClass = order.Status switch
+                            {
+                                OrderStatus.Hazirlaniyor => "badge-soft-warning",
+                                OrderStatus.Kargolandi => "badge-soft-info",
+                                OrderStatus.TeslimEdildi => "badge-soft-success",
+                                OrderStatus.IptalEdildi => "badge-soft-danger",
+                                _ => "badge-soft-secondary"
+                            };
+
+                            <tr>
+                                <td>@index</td>
+                                <td>
+                                    <div class="fw-semibold">@order.CustomerFullName</div>
+                                    <div class="text-muted small">@order.CustomerFullName</div>
+                                </td>
+                                <td>@order.OrderDate.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td class="fw-semibold">@order.TotalPrice.ToString("C")</td>
+                                <td>@order.Items.Count</td>
+
+                                <td>
+                                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                                        <span class="badge rounded-pill @badgeClass">
+                                            @order.Status
+                                        </span>
+
+                                        <form asp-area="Admin"
+                                              asp-controller="Order"
+                                              asp-action="UpdateStatus"
+                                              method="post"
+                                              class="d-flex align-items-center gap-2">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="orderId" value="@order.Id" />
+
+                                            <select name="status"
+                                                    class="form-select form-select-sm status-select">
+                                                @foreach (OrderStatus status in Enum.GetValues(typeof(OrderStatus)))
+                                                {
+                                                    <option value="@( (int)status )"
+                                                            selected="@(status == order.Status ? "selected" : null)">
+                                                        @status
+                                                    </option>
+                                                }
+                                            </select>
+
+                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-check2-circle me-1"></i> Kaydet
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+
+                                <td class="text-end">
+                                    <a asp-area="Admin"
+                                       asp-controller="Order"
+                                       asp-action="Details"
+                                       asp-route-id="@order.Id"
+                                       class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-eye me-1"></i> Detay
+                                    </a>
+                                </td>
+                            </tr>
+
+                            index++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .orders-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .status-select {
+            min-width: 140px;
+        }
+
+        .badge-soft-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-soft-info {
+            background-color: #e0f2fe;
+            color: #075985;
+        }
+
+        .badge-soft-success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-soft-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-soft-secondary {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+    </style>
+}

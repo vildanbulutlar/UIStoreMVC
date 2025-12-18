@@ -1,0 +1,108 @@
+﻿@model UIStoreMVC.Models.Membership.Agency.AgencyApplicationCreateViewModel
+
+@{
+    ViewData["Title"] = "Ajans Başvurusu";
+}
+
+<div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <div>
+            <h3 class="mb-1 fw-bold">Ajans Partneri Başvurusu</h3>
+            <div class="text-muted small">Kurumsal bilgiler ve belgelerle ajans üyeliğine başvur.</div>
+        </div>
+        <span class="badge rounded-pill text-bg-warning-subtle border border-warning-subtle text-warning px-3 py-2">
+            <i class="bi bi-clock me-1"></i> İnceleme süreci
+        </span>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="AgencyApply" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label asp-for="CompanyName" class="form-label small fw-semibold">Firma Adı</label>
+                                <input asp-for="CompanyName" class="form-control" placeholder="Örn: MomDev Teknoloji A.Ş." />
+                                <span asp-validation-for="CompanyName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="TaxNumber" class="form-label small fw-semibold">Vergi No</label>
+                                <input asp-for="TaxNumber" class="form-control" placeholder="1234567890" />
+                                <span asp-validation-for="TaxNumber" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Phone" class="form-label small fw-semibold">Telefon</label>
+                                <input asp-for="Phone" class="form-control" placeholder="05xx xxx xx xx" />
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="ContactPerson" class="form-label small fw-semibold">İlgili Kişi</label>
+                                <input asp-for="ContactPerson" class="form-control" placeholder="Ad Soyad" />
+                                <span asp-validation-for="ContactPerson" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="fw-semibold mb-2">Belgeler</div>
+                        <div class="text-muted small mb-3">PDF/JPG/PNG yükleyebilirsin.</div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label asp-for="TaxDocument" class="form-label small fw-semibold">Vergi Levhası</label>
+                                <input asp-for="TaxDocument" type="file" class="form-control" />
+                                <span asp-validation-for="TaxDocument" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="SignatureCircular" class="form-label small fw-semibold">İmza Sirküleri</label>
+                                <input asp-for="SignatureCircular" type="file" class="form-control" />
+                                <span asp-validation-for="SignatureCircular" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="TradeRegistry" class="form-label small fw-semibold">Ticaret Sicil</label>
+                                <input asp-for="TradeRegistry" type="file" class="form-control" />
+                                <span asp-validation-for="TradeRegistry" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-primary border-0 mt-4 small d-flex gap-2 align-items-start">
+                            <i class="bi bi-info-circle mt-1"></i>
+                            <div>
+                                Başvurun onaylanınca ajans avantajları otomatik aktif olur ve hesabında “Ajans” rozeti görünür.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 py-2">
+                            <i class="bi bi-send me-2"></i> Başvuruyu Gönder
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <div class="fw-bold mb-2"><i class="bi bi-check2-circle me-2"></i>Başvuru İpuçları</div>
+                    <ul class="text-muted small mb-0 ps-3">
+                        <li>Belgeler okunaklı olmalı.</li>
+                        <li>Vergi no ve firma adı uyuşmalı.</li>
+                        <li>Onay süreci admin panelinden yönetilir.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

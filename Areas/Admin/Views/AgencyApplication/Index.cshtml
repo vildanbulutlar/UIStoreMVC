@@ -1,0 +1,129 @@
+﻿@using Application.DTOs.CustomerDTOs
+@using Domain.Enums
+@model List<AgencyApplicationDto>
+
+@{
+    ViewData["Title"] = "Ajans Başvuruları";
+}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="bi bi-briefcase-fill me-2"></i> Ajans Başvuruları
+        </h2>
+        <a class="btn btn-outline-secondary" asp-area="Admin" asp-controller="Home" asp-action="Index">
+            <i class="bi bi-arrow-left me-1"></i> Ana Sayfa
+        </a>
+    </div>
+
+    @if (TempData["Success"] is string successMessage)
+    {
+        <div class="alert alert-success d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @successMessage
+        </div>
+    }
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <table class="table table-hover align-middle bg-white">
+                <thead class="table-light">
+                    <tr>
+                        <th>Firma</th>
+                        <th>İlgili Kişi</th>
+                        <th>Telefon</th>
+                        <th>Vergi No</th>
+                        <th>Başvuru Tarihi</th>
+                        <th>Belgeler</th>
+                        <th>Durum</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.CompanyName</td>
+                            <td>@item.ContactPerson</td>
+                            <td>@item.Phone</td>
+                            <td>@item.TaxNumber</td>
+                            <td>@item.AppliedDate.ToString("dd.MM.yyyy HH:mm")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.TaxDocumentPath))
+                                {
+                                    <a href="@item.TaxDocumentPath" target="_blank" class="text-primary">Vergi Levhası</a>
+                            
+                                    <br />
+                                }
+                                @if (!string.IsNullOrEmpty(item.SignatureCircularPath))
+                                {
+                                    <a href="@item.SignatureCircularPath" target="_blank" class="text-primary">İmza Sirküsü</a>
+                            
+                                    <br />
+                                }
+                                @if (!string.IsNullOrEmpty(item.TradeRegistryPath))
+                                {
+                                    <a href="@item.TradeRegistryPath" target="_blank" class="text-primary">Ticaret Sicil</a>
+                                }
+                            </td>
+                            <td>
+                                @switch (item.ApplicationStatus)
+                                {
+                                    case AgencyApplicationStatus.WaitingForReview:
+                                        @:<span class="badge bg-warning text-dark">İncelemede</span>
+                                        break;
+                                    case AgencyApplicationStatus.Approved:
+                                        @:<span class="badge bg-success">Onaylandı</span>
+                                        break;
+                                    case AgencyApplicationStatus.Rejected:
+                                        @:<span class="badge bg-danger">Reddedildi</span>
+                                        break;
+                                }
+                            </td>
+                            <td>
+                                @if (item.ApplicationStatus == AgencyApplicationStatus.WaitingForReview)
+                                {
+                                    <a href="/Admin/AgencyApplication/Approve/@item.Id"
+                                       class="btn btn-sm btn-success me-2">
+                                        Onayla
+                                    </a>
+                                    <a href="/Admin/AgencyApplication/Reject/@item.Id"
+                                       class="btn btn-sm btn-outline-danger">
+                                        Reddet
+                                    </a>
+                                }
+                                else if (item.ApplicationStatus == AgencyApplicationStatus.Approved)
+                                {
+                                    <span class="text-success fw-semibold">Onaylandı</span>
+                                }
+                                else if (item.ApplicationStatus == AgencyApplicationStatus.Rejected)
+                                {
+                                    <span class="text-danger fw-semibold">Reddedildi</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 12px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .btn {
+        border-radius: 8px;
+    }
+
+    .badge {
+        border-radius: 10px;
+        padding: 0.4em 0.8em;
+    }
+</style>

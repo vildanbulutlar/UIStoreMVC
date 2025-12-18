@@ -1,0 +1,1072 @@
+﻿/* Layout */
+.catalog-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .catalog-layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+/* Left panel */
+.catalog-panel {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    padding: 16px;
+    position: sticky;
+    top: 90px;
+}
+
+/* Mobilde sticky kapansın (içerik daha rahat) */
+@media (max-width: 992px) {
+    .catalog-panel {
+        position: static;
+        top: auto;
+    }
+}
+
+.catalog-panel .panel-title {
+    font-weight: 800;
+    font-size: 18px;
+    margin-bottom: 12px;
+    letter-spacing: .2px;
+}
+
+/* Category links */
+.category-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* sağa ok koyarsan güzel durur */
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #212529;
+    border: 1px solid transparent;
+    transition: background-color .15s ease, border-color .15s ease, transform .08s ease;
+}
+
+    .category-link:hover {
+        background: rgba(13,110,253,.08);
+        border-color: rgba(13,110,253,.18);
+    }
+
+    .category-link:active {
+        transform: scale(.99);
+    }
+
+    .category-link.active {
+        background: rgba(13,110,253,.12);
+        border-color: rgba(13,110,253,.28);
+        font-weight: 600;
+    }
+
+/* Right header */
+.catalog-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+    .catalog-header h2 {
+        margin: 0;
+        font-weight: 900;
+        letter-spacing: .2px;
+    }
+
+/* Product cards */
+.product-card {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,.08);
+    box-shadow: 0 10px 26px rgba(0,0,0,.06);
+    transition: transform .15s ease, box-shadow .15s ease;
+    background: #fff;
+}
+
+    .product-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 34px rgba(0,0,0,.10);
+    }
+
+    .product-card img {
+        transition: transform .25s ease;
+        display: block;
+        width: 100%;
+    }
+
+    .product-card:hover img {
+        transform: scale(1.03);
+    }
+
+/* Discount badge */
+.badge-discount {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #dc3545;
+    color: #fff;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    box-shadow: 0 8px 18px rgba(220,53,69,.25);
+}
+/* Mega menu panel */
+.dropdown-menu.mega-menu {
+    width: min(980px, 92vw);
+    border-radius: 16px;
+    margin-top: 10px;
+}
+
+    /* Linkler mavi/altçizgi olmasın */
+    .dropdown-menu.mega-menu a {
+        text-decoration: none !important;
+    }
+
+.mega-all {
+    font-weight: 800;
+    color: #0d6efd;
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+    .mega-all:hover {
+        background: rgba(13,110,253,.08);
+    }
+
+.mega-link {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 12px;
+    color: #212529 !important;
+    border: 1px solid transparent;
+    white-space: normal; /* uzun isimler satıra geçsin */
+}
+
+    .mega-link:hover {
+        background: rgba(13,110,253,.08);
+        border-color: rgba(13,110,253,.18);
+    }
+
+/* Mobilde daha iyi */
+@media (max-width: 576px) {
+    .dropdown-menu.mega-menu {
+        width: 92vw;
+        padding: 12px !important;
+    }
+}
+
+/* ===== Mega Menu (Hepsiburada hissi) ===== */
+.mega-menu {
+    width: min(980px, 95vw);
+    border-radius: 16px;
+}
+
+.mega-header {
+    background: linear-gradient(180deg, rgba(13,110,253,.10), rgba(255,255,255,1));
+    border-bottom: 1px solid rgba(0,0,0,.06);
+}
+
+.mega-all {
+    padding: 8px 10px;
+    border-radius: 10px;
+    color: #0d6efd;
+}
+
+.mega-all:hover {
+    background: rgba(13,110,253,.08);
+}
+
+.mega-link {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: #212529;
+    border: 1px solid rgba(0,0,0,.06);
+    background: #fff;
+    transition: .15s ease;
+}
+
+.mega-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    border-color: rgba(13,110,253,.25);
+}
+
+.mega-link.active {
+    border-color: rgba(13,110,253,.55);
+    background: rgba(13,110,253,.06);
+}
+
+.mega-name {
+    font-weight: 600;
+    line-height: 1.15;
+}
+
+.mega-sub {
+    font-size: 12px;
+    color: rgba(33,37,41,.65);
+}
+
+/* Mobilde dropdown çok büyümesin */
+@media (max-width: 768px) {
+    .mega-menu { width: 95vw; }
+}
+
+/* Hero background: soft gradient + glow */
+.hero-bg {
+    background: radial-gradient(800px 300px at 15% 30%, rgba(99, 102, 241, .12), transparent 60%), radial-gradient(700px 260px at 80% 35%, rgba(59, 130, 246, .10), transparent 60%), linear-gradient(135deg, #ffffff 0%, #f7f8ff 35%, #fbfbff 100%);
+    border-color: rgba(15, 23, 42, .08) !important;
+}
+
+/* Logo bubble büyüsün */
+.logo-bubble-sm {
+    width: 104px; /* önce 86px idi */
+    height: 104px;
+}
+
+/* Resim bubble içinde daha büyük dursun */
+.hero-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 6px; /* önce 10px idi -> küçülttük ki logo büyüsün */
+}
+.hero-header {
+    align-items: center;
+}
+
+.hero-title {
+    font-family: var(--font-brand);
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    line-height: 1.1;
+}
+
+/* Slogan daha küçük ve daha “soft” */
+.hero-sub {
+    font-size: 14px; /* 16 yerine */
+    line-height: 1.5;
+    max-width: 520px;
+}
+.btn.btn-primary,
+.btn.btn-outline-primary {
+    font-size: 14px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+:root {
+    --font-brand: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+    font-family: var(--font-body);
+    color: #1f2937;
+}
+/* Tipografi: ana sayfa ile uyum */
+:root {
+    --font-brand: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --ink: #111827;
+    --muted: #6b7280;
+    --line: rgba(15, 23, 42, .10);
+    --soft: #f7f8ff;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--ink);
+}
+
+/* Kartlar */
+.pd-card {
+    background: #fff;
+    border-color: var(--line) !important;
+}
+
+/* Sol görsel kart */
+.pd-image-card {
+    background: radial-gradient(700px 300px at 30% 20%, rgba(99,102,241,.12), transparent 60%), linear-gradient(135deg, #ffffff 0%, #f7f8ff 60%, #ffffff 100%);
+}
+
+.pd-image {
+    height: 520px;
+    object-fit: cover;
+}
+
+/* Başlık + fiyat */
+.pd-title {
+    font-family: var(--font-brand);
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    line-height: 1.15;
+    font-size: 34px;
+    margin: 0;
+}
+
+.pd-price {
+    font-family: var(--font-brand);
+    font-weight: 700;
+    font-size: 26px;
+    color: #3b82f6; /* primary ton */
+}
+
+/* Stok badge: yeşil değil, soft mavi/lila */
+.pd-stock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: #1e3a8a;
+    background: rgba(59,130,246,.10);
+    border: 1px solid rgba(59,130,246,.20);
+}
+
+/* Bölüm başlığı */
+.pd-section-title {
+    font-family: var(--font-brand);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .2px;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+/* Açıklama */
+.pd-desc {
+    color: var(--muted);
+    font-size: 14.5px;
+    line-height: 1.7;
+}
+
+/* Satın alma kutusu */
+.pd-buy-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f7f8ff 100%);
+    border-color: var(--line) !important;
+}
+
+.pd-label {
+    font-size: 13px;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+.pd-btn {
+    font-family: var(--font-brand);
+    letter-spacing: .2px;
+}
+
+.pd-hint {
+    font-size: 12.5px;
+}
+
+/* Mobilde görsel boyu */
+@media (max-width: 991px) {
+    .pd-image {
+        height: 320px;
+    }
+
+    .pd-title {
+        font-size: 28px;
+    }
+
+    .pd-price {
+        font-size: 22px;
+    }
+}
+/* Görsel kart daha kontrollü */
+.pd-image-card {
+    max-height: 420px; /* 🔥 resmin aşırı uzamasını keser */
+}
+
+/* Resim: sabit oran + kırpma */
+.pd-image {
+    height: 420px; /* 🔥 520 yerine */
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Büyük ekranlarda bile abartmasın */
+@media (min-width: 1200px) {
+    .pd-image-card {
+        max-height: 440px;
+    }
+
+    .pd-image {
+        height: 440px;
+    }
+}
+
+/* Mobilde zaten küçültsün */
+@media (max-width: 991px) {
+    .pd-image-card {
+        max-height: 300px;
+    }
+
+    .pd-image {
+        height: 300px;
+    }
+}
+/* Auth page background */
+.auth-bg {
+    background: radial-gradient(900px 340px at 15% 25%, rgba(99,102,241,.12), transparent 60%), radial-gradient(800px 300px at 85% 20%, rgba(59,130,246,.10), transparent 60%), linear-gradient(135deg, #ffffff 0%, #f7f8ff 55%, #ffffff 100%);
+    border-color: rgba(15, 23, 42, .08) !important;
+}
+
+/* Left panel */
+.auth-left {
+    background: rgba(255,255,255,.65);
+    border: 1px solid rgba(15, 23, 42, .08);
+}
+
+.auth-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, .10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .auth-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 6px;
+    }
+
+/* Typography */
+.auth-title {
+    font-family: var(--font-brand);
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    font-size: 34px;
+}
+
+.auth-desc {
+    color: #6b7280;
+    line-height: 1.7;
+    font-size: 14.5px;
+}
+
+.auth-brand {
+    font-family: var(--font-brand);
+    font-weight: 700;
+    letter-spacing: -0.4px;
+}
+
+.auth-brand-sub {
+    color: #64748b;
+    font-size: 12.5px;
+}
+
+/* Chips */
+.auth-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: rgba(59,130,246,.08);
+    border: 1px solid rgba(59,130,246,.18);
+    color: #1e3a8a;
+    font-size: 13px;
+}
+
+/* Note */
+.auth-note {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(99,102,241,.08);
+    border: 1px solid rgba(99,102,241,.16);
+    color: #334155;
+    font-size: 13px;
+}
+
+/* Form card */
+.auth-card {
+    border-color: rgba(15, 23, 42, .10) !important;
+}
+
+.auth-label {
+    font-size: 13px;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+.auth-input {
+    border-radius: 14px;
+    padding: 12px 14px;
+    border-color: rgba(15, 23, 42, .12);
+}
+
+    .auth-input:focus {
+        box-shadow: 0 0 0 .2rem rgba(59,130,246,.18);
+        border-color: rgba(59,130,246,.35);
+    }
+
+.auth-btn {
+    font-family: var(--font-brand);
+    letter-spacing: .2px;
+}
+
+.auth-link {
+    text-decoration: none;
+    font-weight: 600;
+}
+
+    .auth-link:hover {
+        text-decoration: underline;
+    }
+
+/* Mobile */
+@media (max-width: 991px) {
+    .auth-title {
+        font-size: 28px;
+    }
+}
+/* Auth sayfaları için form ölçüleri */
+.auth-form .form-label {
+    font-size: 13px;
+    color: #475569;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-family: var(--font-body);
+}
+
+.auth-form .form-control {
+    height: 52px;
+    border-radius: 14px;
+    font-size: 15px;
+    padding: 0 16px;
+    border-color: rgba(15,23,42,.12);
+    font-family: var(--font-body);
+}
+
+    .auth-form .form-control::placeholder {
+        font-size: 14px;
+        color: #94a3b8;
+    }
+
+    .auth-form .form-control:focus {
+        box-shadow: 0 0 0 .2rem rgba(59,130,246,.15);
+        border-color: rgba(59,130,246,.35);
+    }
+
+/* Button yazısı da ana sayfa gibi cool */
+.auth-form .btn {
+    font-family: var(--font-brand);
+    font-size: 14px;
+    letter-spacing: .2px
+    /* Product Detail (MomDev Atelier) */
+.pd-card { background: #fff; }
+.pd-title { font-size: 2.1rem; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; }
+
+.pd-price { font-size: 2rem; line-height: 1; }
+.pd-old-price { font-size: 1.1rem; }
+
+.pd-section-title { font-weight: 700; margin-bottom: .35rem; }
+.pd-desc { color: #6c757d; }
+
+/* Görsel orantı (resim dev gibi olmasın) */
+.pd-image-card { border-radius: 1.75rem; }
+.pd-image {
+  height: clamp(260px, 46vh, 460px);
+  object-fit: cover;
+  display: block;
+}
+
+/* Mini galeri */
+.pd-thumb {
+  width: 76px;
+  height: 56px;
+  object-fit: cover;
+}
+
+/* Form inputları daha büyük ve oranlı */
+.pd-label { font-weight: 600; }
+.pd-input { height: 48px; font-size: 1rem; }
+
+/* Stok kutusu ana temaya uyumlu */
+.pd-stock { background: rgba(13,110,253,.14); color: #0b2d5c; }
+
+/* === PRODUCT DETAIL === */
+
+.product-title {
+    font-size: 1.6rem; /* küçüldü */
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.price-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #9ca3af;
+    font-size: 0.95rem;
+}
+
+.current-price {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.discount-badge {
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 999px;
+}
+
+.product-info-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.06);
+}
+
+/* stok kutusu */
+.stock-box {
+    background: #eef4ff;
+    color: #1e40af;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+/* AUTH PAGES (Login/Register) */
+.auth-bg {
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(13,110,253,.12), transparent 60%), radial-gradient(900px 500px at 90% 20%, rgba(111,66,193,.10), transparent 55%);
+}
+
+.auth-left {
+    background: rgba(255,255,255,.55);
+    border: 1px solid rgba(13,110,253,.12);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+}
+
+.auth-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.9);
+    border: 1px solid rgba(0,0,0,.06);
+    overflow: hidden;
+}
+
+    .auth-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 8px;
+    }
+
+.auth-brand {
+    font-weight: 800;
+    font-size: 1.05rem;
+}
+
+.auth-brand-sub {
+    font-size: .9rem;
+    color: #6c757d;
+}
+
+.auth-title {
+    font-weight: 800;
+    letter-spacing: -.02em;
+}
+
+.auth-desc {
+    color: #6c757d;
+}
+
+.auth-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .35rem .6rem;
+    border-radius: 999px;
+    background: rgba(13,110,253,.08);
+    border: 1px solid rgba(13,110,253,.12);
+    font-size: .85rem;
+}
+
+.auth-note {
+    font-size: .9rem;
+    color: #495057;
+    padding: .75rem .9rem;
+    border-radius: 16px;
+    background: rgba(255,255,255,.8);
+    border: 1px solid rgba(0,0,0,.06);
+}
+
+.auth-card {
+    backdrop-filter: blur(6px);
+}
+
+.auth-label {
+    font-weight: 600;
+    color: #212529;
+}
+
+.auth-input {
+    border-radius: 14px;
+    padding: .7rem .85rem;
+}
+
+.auth-btn {
+    font-weight: 700;
+}
+
+.auth-link {
+    text-decoration: none;
+    font-weight: 600;
+}
+
+    .auth-link:hover {
+        text-decoration: underline;
+    }
+    /* ✅ Tek ekran hedefi: sayfa yüksekliğini kontrol et */
+.checkout-page{
+    /* Navbar + boşluk payı: kendi projene göre 120-160 arası ayarlanır */
+    min-height: calc(100vh - 140px);
+}
+
+/* ✅ Kartlar daha kompakt */
+.md-card{
+    border-radius: 16px;
+    box-shadow: 0 10px 26px rgba(2, 6, 23, .06);
+}
+
+/* ✅ Başlık/subtitle daha az yer */
+.checkout-title{ font-size: 1.45rem; }
+.checkout-subtitle{ font-size: .92rem; }
+
+/* ✅ Sticky kolonu: içeride panel yüksekliği */
+@media (min-width: 992px){
+  .checkout-panels{
+      display: grid;
+      gap: 8px;
+  }
+
+  /* Sağ blok (sepet + ödeme) toplam yüksekliği tek ekrana göre ayarla */
+  .right-stack{
+      max-height: calc(100vh - 170px);
+      overflow: hidden; /* iç scroll alanları çalışsın */
+      display: grid;
+      gap: 8px;
+  }
+
+  /* Sol blok (kullanıcı + adres) */
+  .left-stack{
+      max-height: calc(100vh - 170px);
+      overflow: hidden;
+      display: grid;
+      gap: 8px;
+  }
+}
+
+/* ✅ Adres scroll daha agresif (sayfa uzamasın) */
+.address-scroll{
+    max-height: 160px;  /* 230 çok uzatıyordu */
+    overflow: auto;
+}
+
+/* ✅ Sepet ürün satırları: kendi içinde scroll */
+.cart-lines{
+    max-height: 170px;
+    overflow: auto;
+    padding-right: 4px;
+    display: grid;
+    gap: 8px;
+}
+.cart-line{
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+    border: 1px solid rgba(15,23,42,.08);
+    border-radius: 12px;
+    padding: 8px 10px;
+    background: #fff;
+}
+.cart-line .name{ font-weight: 600; }
+.cart-line .qty{ color:#64748b; font-size:.9rem; }
+.cart-line .price{ font-weight:800; }
+
+/* ✅ Ödeme kartı daha kısa */
+.pay-card{
+    padding: 12px 14px;
+    border-radius: 16px;
+}
+.pay-card-number{
+    margin: 8px 0 10px;
+    font-size: 15px;
+}
+
+/* ✅ Form aralıkları sıkışsın */
+.form-label{ margin-bottom: .25rem; }
+.mb-2{ margin-bottom: .5rem !important; }
+/* ✅ Sadece yazılar + formlar 1 tık küçülsün (override) */
+
+/* Başlık ve bölüm başlıkları */
+.checkout-title{
+    font-size: 1.55rem; /* biraz küçült */
+    line-height: 1.15;
+}
+.checkout-subtitle{
+    font-size: .92rem;
+}
+.section-title{
+    font-size: 1.05rem;
+}
+
+/* Genel küçük metinler */
+.md-badge{
+    font-size: .88rem;
+    padding: .38rem .65rem;
+}
+.md-alert{
+    font-size: .92rem;
+    padding: .75rem .9rem;
+}
+
+/* Adres kartı içi */
+.address-item{
+    padding: 10px 12px;   /* 12x14 -> 10x12 */
+}
+.address-item .fw-semibold{
+    font-size: .95rem;
+}
+.address-item .text-muted.small{
+    font-size: .82rem;
+}
+
+/* Sepet tablosu */
+.table.table-sm{
+    font-size: .90rem;
+}
+.table thead.small{
+    font-size: .80rem;
+}
+
+/* Ödeme kartı (çok az küçült) */
+.pay-card{
+    padding: 12px 14px;   /* 14x16 -> 12x14 */
+}
+.pay-card-number{
+    font-size: 15px;      /* 16 -> 15 */
+    margin: 8px 0 10px;   /* 10/14 -> 8/10 */
+}
+.pay-card-bottom .value{
+    font-size: 13px;      /* 14 -> 13 */
+}
+
+/* Form label + input */
+.form-label{
+    font-size: .90rem;
+    margin-bottom: .20rem;
+}
+.form-control{
+    font-size: .92rem;
+    padding: .50rem .75rem;  /* daha kompakt */
+}
+
+/* Buton (yükseklik 1 tık düşsün) */
+.btn.rounded-pill.py-3{
+    padding-top: .70rem !important;
+    padding-bottom: .70rem !important;
+    font-size: .95rem;
+}
+/* =========================================================
+   ✅ CHECKOUT ONLY (tek yerde, çakışmasız)
+   ========================================================= */
+
+.checkout-page {
+    min-height: calc(100vh - 140px);
+}
+
+    /* Başlıklar */
+    .checkout-page .checkout-title {
+        font-weight: 800;
+        letter-spacing: -.02em;
+        color: #0f172a;
+        font-size: 1.55rem;
+        line-height: 1.15;
+    }
+
+    .checkout-page .checkout-subtitle {
+        color: #64748b;
+        font-size: .92rem;
+    }
+
+    /* Kartlar */
+    .checkout-page .md-card {
+        border: 0;
+        border-radius: 16px;
+        box-shadow: 0 10px 26px rgba(2, 6, 23, .06);
+        background: #fff;
+    }
+
+    .checkout-page .section-title {
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: #0f172a;
+        letter-spacing: -.01em;
+    }
+
+    /* Badge / Alert */
+    .checkout-page .md-badge {
+        border-radius: 999px;
+        padding: .38rem .65rem;
+        font-weight: 600;
+        font-size: .88rem;
+        border: 1px solid rgba(15,23,42,.10);
+        background: #fff;
+        color: #0f172a;
+        white-space: nowrap;
+    }
+
+    .checkout-page .md-badge-primary {
+        border-color: rgba(13,110,253,.18);
+        background: rgba(13,110,253,.08);
+        color: #0b5ed7;
+    }
+
+    .checkout-page .md-badge-neutral {
+        border-color: rgba(15,23,42,.10);
+        background: rgba(15,23,42,.04);
+        color: #0f172a;
+    }
+
+    .checkout-page .md-alert {
+        border: 0;
+        border-radius: 16px;
+        padding: .75rem .9rem;
+        font-size: .92rem;
+    }
+
+    /* Adres listesi */
+    .checkout-page .address-scroll {
+        max-height: 210px; /* 230 -> biraz daha kompakt */
+        overflow: auto;
+        padding-right: 4px;
+    }
+
+    .checkout-page .address-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .checkout-page .address-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        border: 1px solid rgba(15,23,42,.10);
+        border-radius: 16px;
+        padding: 10px 12px;
+        background: #fff;
+        cursor: pointer;
+        transition: .15s ease;
+    }
+
+        .checkout-page .address-item:hover {
+            border-color: rgba(13,110,253,.25);
+            box-shadow: 0 10px 20px rgba(13,110,253,.06);
+        }
+
+        .checkout-page .address-item.active {
+            border-color: rgba(13,110,253,.45);
+            background: rgba(13,110,253,.03);
+            box-shadow: 0 12px 24px rgba(13,110,253,.08);
+        }
+
+        .checkout-page .address-item .fw-semibold {
+            font-size: .95rem;
+        }
+
+        .checkout-page .address-item .text-muted.small {
+            font-size: .82rem;
+        }
+
+    /* Sepet tablosu */
+    .checkout-page .table.table-sm {
+        font-size: .90rem;
+    }
+
+    .checkout-page .table thead.small {
+        font-size: .80rem;
+    }
+
+    /* Ödeme kartı */
+    .checkout-page .pay-card {
+        border-radius: 16px;
+        padding: 12px 14px;
+        color: #fff;
+        background: linear-gradient(135deg, rgba(37,99,235,.95), rgba(59,130,246,.70));
+        box-shadow: 0 16px 35px rgba(37,99,235,.18);
+    }
+
+    .checkout-page .pay-card-number {
+        font-size: 15px;
+        letter-spacing: 2px;
+        margin: 8px 0 10px;
+        opacity: .95;
+        font-weight: 700;
+    }
+
+    .checkout-page .pay-card-bottom .value {
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    /* Formlar */
+    .checkout-page .form-label {
+        font-size: .90rem;
+        margin-bottom: .20rem;
+    }
+
+    .checkout-page .form-control {
+        font-size: .92rem;
+        padding: .50rem .75rem;
+    }
+
+    /* Buton */
+    .checkout-page .btn.btn-primary.w-100.rounded-pill.py-3 {
+        padding-top: .70rem !important;
+        padding-bottom: .70rem !important;
+        font-size: .95rem;
+    }

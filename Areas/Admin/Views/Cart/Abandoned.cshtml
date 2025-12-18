@@ -1,0 +1,73 @@
+﻿@using Application.DTOs.CartDTOs
+@model List<AbandonedCartDto>
+
+@{
+    ViewData["Title"] = "Terk Edilmiş Sepetler";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="fw-bold mb-1">Terk Edilmiş Sepetler</h2>
+            <p class="text-muted mb-0">
+                Son 24 saattir güncellenmeyen ve içinde ürün olan sepetler.
+            </p>
+        </div>
+
+        <form asp-area="Admin" asp-controller="Cart" asp-action="SendReminder" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-envelope me-1"></i>
+                Hatırlatma Maili Gönder (24h+)
+            </button>
+        </form>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#Sepet</th>
+                            <th>Müşteri</th>
+                            <th>E-posta</th>
+                            <th>Son Güncelleme</th>
+                            <th>Ürün Adedi</th>
+                            <th>Toplam</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model == null || !Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    Şu anda kriterlere uyan terk edilmiş sepet yok.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var cart in Model)
+                            {
+                                <tr>
+                                    <td>#@cart.CartId</td>
+                                    <td>@cart.CustomerFullName</td>
+                                    <td>@cart.CustomerEmail</td>
+                                    <td>@cart.LastUpdatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                    <td>@cart.Items.Sum(i => i.Quantity)</td>
+                                    <td>@cart.TotalPrice.ToString("C")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

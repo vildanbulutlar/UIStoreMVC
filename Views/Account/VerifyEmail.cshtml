@@ -1,0 +1,19 @@
+﻿<h3>E-Posta Doğrulama</h3>
+
+<form method="post">
+    <input type="hidden" name="email" value="@ViewBag.Email" />
+
+    <div class="mb-3">
+        <label>Doğrulama Kodu</label>
+        <input name="code" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary">Kodu Doğrula</button>
+
+    @if (ViewBag.Code != null)
+    {
+        <div class="alert alert-warning mt-3">
+            <b>Demo Kod:</b> @ViewBag.Code
+        </div>
+    }
+</form>

@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] = "JSON Import";
+}
+
+<div class="container py-4">
+    <h3 class="mb-3">JSON Import</h3>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p class="text-muted mb-3">
+                Kategoriler + Ürünler + Ürün Görselleri (cover + gallery) JSON dosyasından içe aktarılır.
+            </p>
+
+            <form asp-area="Admin"
+                  asp-controller="Seed"
+                  asp-action="Import"
+                  method="post"
+                  enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label class="form-label">JSON Dosyası</label>
+                    <input type="file" name="jsonFile" accept=".json" class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    İçe Aktar
+                </button>
+            </form>
+
+            <hr />
+
+            <small class="text-muted">
+                URL: <code>/Admin/Seed/Import</code>
+            </small>
+        </div>
+    </div>
+</div>
